@@ -166,14 +166,100 @@ function buildGridOnce() {
     setEditorEnabled(false);
 }
 
-function subscribeTimetableCells(uid){
-    if(unsubscribeCells) unsubscribeCells();
+function subscribeTimetableCells(uid) {
+    if (unsubscribeCells) unsubscribeCells();
 
-    const col =db.collection("users").doc(uid).collection("timetableCells");
-    timetableMessage.textContent="読み込み中..."
+    const col = db.collection("users").doc(uid).collection("timetableCells");
+    timetableMessage.textContent = "読み込み中..."
 
-    unsubscribeCells= col.onSnapshot((snap)=>{
-        
-    })
+    unsubscribeCells = col.onSnapshot((snap) => {
+        snap.docChanges().forEach((chg) => {
+            const is = chg.doc.id;
+            if (chg.type === "removed") {
+                callCache.delete(id);
+            } else {
+                callCache.set(id, chg.doc.data());
+            }
+            updateCellUIBykey(id);
+        });
+
+        timetableMessage.textContent = "";
+        if (selectedKey) fillEditorFromCache(selectedKey);
+    }, (err) => {
+        timetableMessage.textContent = "";
+        showError(err?.message ?? "時間割の読み込みに失敗しました");
+    });
 }
 
+saveCallButton.addEventListener("click", async () => {
+    if (!selectedKey) return;
+    showError("");
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const name = editName.value.trim();
+    const start = editStart.value;
+    const end = editEnd.value;
+
+    if (start && end && start >= end) {
+        showError("開始時刻が終了時刻以上になっています。");
+        return;
+    }
+
+    const [day, periodString] = selectedKey.split("_");
+    const period = Number(periodString);
+
+    const ref = db.collection("users").doc(user.uid).collection("timetableCells").doc(selectedKey);
+
+    try {
+        await ref.set({
+            day, period, name, start, end,
+            updatedAt: firebaseConfig.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+    } catch (err) {
+        showError(err?.message ? "保存に失敗しました");
+    }
+});
+
+deleteCallButton.addEventListener("click", async () => {
+    if (!selectedKey) return;
+    showError("");
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const ref = db.collection("users").doc(user.uid).collection("timetableCells").doc(selectedKey);
+
+    try {
+        await ref.delete();
+        editName.value = "";
+        editStart.value = "";
+        editEnd.value = "";
+    } catch (err) {
+        showError(err?.message ? "削除に失敗しました");
+    }
+});
+
+logoutButton.addEventListener("click", async () => {
+    showError("");
+    try {
+        await auth.signOut();
+    } catch (err) {
+        showError(err?.message ?? "ログアウトに失敗しました");
+    }
+});
+
+auth.onAuthStateChanged((user) => {
+    showError("");
+    if(!user) {
+        window.location.href = "./index.html"
+        return;
+    }
+
+    statusEl.textContent="ログイン済み";
+    userEmailEl.textContent=user.email??"(emailなし";
+
+    buildGridOnce();
+    subscribeTimetableCells(user.uid);
+});
