@@ -66,7 +66,7 @@ button.danger {
     flex-wrap: wrap;
 }
 
-a.btn {
+a.button {
     display: inline-block;
     text-decoration: none;
     padding: 10px 12px;
@@ -140,9 +140,10 @@ a.btn {
 .timetableCell .name {
     font-weight: 600;
     font-size: 13px;
+    color: #000000;
 }
 
-.timetableCell.time {
+.timetableCell .time {
     font-size: 12px;
     color: #667085;
 }
@@ -161,7 +162,7 @@ a.btn {
     gap: 10px;
 }
 
-.time {
+.timeRow {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;

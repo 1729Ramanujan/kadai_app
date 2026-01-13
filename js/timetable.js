@@ -30,7 +30,6 @@ const days = [
     { key: "thu", label: "木" },
     { key: "fri", label: "金" },
     { key: "sat", label: "土" },
-    { key: "sun", label: "日" },
 ];
 
 const periods = [1, 2, 3, 4, 5, 6];
@@ -74,7 +73,7 @@ function updateCellUIBykey(key) {
         return;
     }
 
-    button.classList.remove("filled");
+    button.classList.add("filled");
     nameEl.textContent = name || "(授業名なし)";
     timeEl.textContent = (start && end) ? `${start}-${end}` : (start || end ? `時間：${start}${end ? "-" + end : ""}` : "");
 }
@@ -110,16 +109,19 @@ function buildGridOnce() {
     table.className = "table";
 
     const thead = document.createElement("thead");
-    const hr = document.createElement("hr");
-    const corner = document.createElement("corner");
+    const tr = document.createElement("tr");
+
+    const corner = document.createElement("th");
     corner.textContent = "限";
-    hr.appendChild(corner);
+    tr.appendChild(corner);
+
     days.forEach(d => {
         const th = document.createElement("th");
         th.textContent = d.label;
-        hr.appendChild(th);
+        tr.appendChild(th);
     });
-    thead.appendChild(hr);
+
+    thead.appendChild(tr);
     table.appendChild(thead);
 
     const tbody = document.createElement("tbody");
