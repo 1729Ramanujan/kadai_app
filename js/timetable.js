@@ -120,10 +120,10 @@ function buildGridOnce() {
         hr.appendChild(th);
     });
     thead.appendChild(hr);
-    thead.appendChild(thead);
+    table.appendChild(thead);
 
     const tbody = document.createElement("tbody");
-    periods.forEach(d => {
+    periods.forEach(p => {
         const tr = document.createElement("tr");
 
         const th = document.createElement("th");
@@ -174,7 +174,7 @@ function subscribeTimetableCells(uid) {
 
     unsubscribeCells = col.onSnapshot((snap) => {
         snap.docChanges().forEach((chg) => {
-            const is = chg.doc.id;
+            const id = chg.doc.id;
             if (chg.type === "removed") {
                 callCache.delete(id);
             } else {
@@ -215,10 +215,10 @@ saveCallButton.addEventListener("click", async () => {
     try {
         await ref.set({
             day, period, name, start, end,
-            updatedAt: firebaseConfig.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         }, { merge: true });
     } catch (err) {
-        showError(err?.message ? "保存に失敗しました");
+        showError(err?.message ?? "保存に失敗しました");
     }
 });
 
@@ -237,7 +237,7 @@ deleteCallButton.addEventListener("click", async () => {
         editStart.value = "";
         editEnd.value = "";
     } catch (err) {
-        showError(err?.message ? "削除に失敗しました");
+        showError(err?.message ?? "削除に失敗しました");
     }
 });
 
@@ -258,7 +258,7 @@ auth.onAuthStateChanged((user) => {
     }
 
     statusEl.textContent="ログイン済み";
-    userEmailEl.textContent=user.email??"(emailなし";
+    userEmailEl.textContent=user.email??"(emailなし)";
 
     buildGridOnce();
     subscribeTimetableCells(user.uid);

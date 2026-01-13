@@ -2,12 +2,11 @@ body {
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     background: #f6f7fb;
     margin: 0;
+    padding: 16px;
 }
 
-.container {
-    max-width: 720px;
-    margin: 40px auto;
-    padding: 0 16px;
+h1 {
+    margin: 0 0 12px;
 }
 
 .card {
@@ -18,15 +17,22 @@ body {
     margin: 12px 0;
 }
 
-.form {
-    display: grid;
-    gap: 10px;
+.status {
+    margin: 0;
+    color: #334155;
+}
+
+.error {
+    margin: 0;
+    color: #b42318;
+    white-space: pre-wrap;
 }
 
 label {
     display: grid;
     gap: 6px;
     font-size: 14px;
+    margin: 10px 0;
 }
 
 input {
@@ -54,19 +60,114 @@ button.danger {
     background: #d92d20;
 }
 
-.status {
-    margin: 0;
-    color: #334155;
+.buttonRow {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.error {
-    margin: 0;
-    color: #b42318;
-    white-space: pre-wrap;
+a.btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #2b59ff;
+    color: #fff;
+    font-weight: 600;
 }
 
-.divider {
-    height: 1px;
-    background: #eef0f6;
-    margin: 16px 0;
+.signedinHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.timetableLayout {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.timetableGrid {
+    flex: 1;
+}
+
+.timetableEditor {
+    width: 320px;
+    position: sticky;
+    top: 12px;
+}
+
+.muted {
+    color: #667085;
+    font-size: 13px;
+    margin: 6px 0;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border: 1px solid #e6e8ef;
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table th {
+    background: #f6f7fb;
+    font-weight: 600;
+}
+
+.timetableCell {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 10px;
+    border: 1px solid #d7dbe7;
+    background: #fff;
+    cursor: pointer;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+}
+
+.timetableCell .name {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.timetableCell.time {
+    font-size: 12px;
+    color: #667085;
+}
+
+.timetableCell.filled {
+    border-color: #b9c2ff;
+    background: #f3f5ff;
+}
+
+.timetableCell.active {
+    outline: 2px solid #2b59ff;
+}
+
+.form {
+    display: grid;
+    gap: 10px;
+}
+
+.time {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
