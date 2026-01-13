@@ -1,4 +1,4 @@
-// まずはhtml上にある
+// まずはhtml上にある要素をとってきて、js上で操作できるように名前をつけて保存
 const statusEl = document.getElementById("status");
 const errorEl = document.getElementById("error");
 const userEmailEl = document.getElementById("userEmail");
@@ -14,6 +14,7 @@ const editEnd = document.getElementById("editEnd");
 const saveCallButton = document.getElementById("saveCallButton");
 const deleteCallButton = document.getElementById("deleteCallButton");
 
+// エラーがあれば表示させて、なかったらhiddenをつけて隠すようにする関数（エラー欄の表示・非表示）
 function showError(message) {
     if (!message) {
         errorEl.hidden = true;
@@ -24,6 +25,7 @@ function showError(message) {
     errorEl.textContent = message;
 }
 
+// 時間割にセットしたい曜日を書いておく
 const days = [
     { key: "mon", label: "月" },
     { key: "tue", label: "火" },
@@ -33,12 +35,20 @@ const days = [
     { key: "sat", label: "土" },
 ];
 
+// 時間割にセットしたい限の個数を定義
 const periods = [1, 2, 3, 4, 5, 6];
 
+// Firebaseから読んだ各コマのデータをcallCacheに保存してる
 const callCache = new Map();
+// 現在ユーザーが選択しているコマを保存するための変数
 let selectedKey = null;
+// Firebaseは保存されたデータの更新がないかをずっと続ける（これは購読という）
+// ずっとデータの更新を監視し続けると何重にもなっていつか壊れるので、購読を解除するための変数を設定
+// 変数の中身は関数
 let unsubscribeCells = null;
 
+// コマが選ばれていない時は編集欄を操作できないようにしている
+// 編集欄にある要素を一つづつ!enabledにすることで反応しないようにしてる
 function setEditorEnabled(enabled) {
     editName.disabled = !enabled;
     editStart.disabled = !enabled;
@@ -47,10 +57,12 @@ function setEditorEnabled(enabled) {
     deleteCallButton.disabled = !enabled;
 }
 
+// 指定したコマのボタンを探す関数
 function findCellButton(day, period) {
     return document.querySelector(`.timetableCell[data-day="${day}"][data-period="${period}"]`);
 }
 
+// セルに表示されている時間割の情報を更新する関数
 function updateCellUIBykey(key) {
     const [day, periodString] = key.split("_");
     const period = Number(periodString);
@@ -79,6 +91,7 @@ function updateCellUIBykey(key) {
     timeEl.textContent = (start && end) ? `${start}-${end}` : (start || end ? `時間：${start}${end ? "-" + end : ""}` : "");
 }
 
+// 選択中のコマの授業の情報をcallCacheからとってきて、その情報を右側の欄に入力している
 function fillEditorFromCache(key) {
     const data = callCache.get(key);
     editName.value = data?.name ?? "";
@@ -86,6 +99,9 @@ function fillEditorFromCache(key) {
     editEnd.value = data?.end ?? "";
 }
 
+// ユーザーがコマをクリックしたときに更新する関数
+// selectedKeyを更新して、.activeのつけ外しを行う
+// 編集欄を有効にしたり、編集欄の更新を担ってる
 function selectCell(key) {
     selectedKey = key;
 
@@ -101,6 +117,8 @@ function selectCell(key) {
     fillEditorFromCache(key);
 }
 
+// もし作っていなければ、時間割表を作るようにしている（何回も作っても意味ないので、一回だけ）
+// 箱だけ作っているイメージ中身は別の関数で作ってる
 function buildGridOnce() {
     if (timetableGridWrap.dataset.built === "1") {
         return;
@@ -169,6 +187,7 @@ function buildGridOnce() {
     setEditorEnabled(false);
 }
 
+// Firebase上でデータが更新されたら、それを反映できるようにFirebaseを購読する関数
 function subscribeTimetableCells(uid) {
     if (unsubscribeCells) unsubscribeCells();
 
@@ -194,6 +213,7 @@ function subscribeTimetableCells(uid) {
     });
 }
 
+// 保存ボタンが押された時にそれをFirebaseに保存するための関数
 saveCallButton.addEventListener("click", async () => {
     if (!selectedKey) return;
     showError("");
@@ -225,6 +245,7 @@ saveCallButton.addEventListener("click", async () => {
     }
 });
 
+// 削除ボタンが押された時に情報を更新する関数
 deleteCallButton.addEventListener("click", async () => {
     if (!selectedKey) return;
     showError("");
@@ -244,6 +265,7 @@ deleteCallButton.addEventListener("click", async () => {
     }
 });
 
+// ログアウトボタンが押された時の関数
 logoutButton.addEventListener("click", async () => {
     showError("");
     try {
@@ -253,6 +275,7 @@ logoutButton.addEventListener("click", async () => {
     }
 });
 
+// ログイン状態かどうかを監視して、違っているのならindex.htmlに戻す関数
 auth.onAuthStateChanged((user) => {
     showError("");
     if(!user) {
