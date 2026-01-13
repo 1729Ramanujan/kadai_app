@@ -1,3 +1,4 @@
+// まずはhtml上にある
 const statusEl = document.getElementById("status");
 const errorEl = document.getElementById("error");
 const userEmailEl = document.getElementById("userEmail");
