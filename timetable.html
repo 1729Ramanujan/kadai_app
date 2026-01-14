@@ -56,6 +56,31 @@
                     <button id="deleteCallButton" class="secondary" disabled type="button">削除</button>
                 </div>
             </div>
+            <hr class="divider">
+
+            <div id="tasksSection">
+                <h3>課題</h3>
+
+                <p class="muted" id="tasksInfo">授業を選択してください</p>
+
+                <div class="tasksList" id="tasksList"></div>
+
+                <div class="card innerCard">
+                    <label>タイトル
+                        <input type="text" id="taskTitle" placeholder="例:レポート１">
+                    </label>
+
+                    <label>締切
+                        <input type="datetime-local" id="taskDue">
+                    </label>
+
+                    <label>詳細
+                        <textarea id="taskDetail" rows="4" placeholder="提出方法、ページ数など"></textarea>
+                    </label>
+
+                    <button type="button" id="addTaskbutton" disabled>追加</button>
+                </div>
+            </div>
         </div>
     </div>
 

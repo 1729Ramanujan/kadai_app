@@ -172,3 +172,59 @@ button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.divider {
+    height: 1px;
+    background: #eef0f6;
+    margin: 16px 0;
+    border: 0;
+}
+
+.tasksList {
+    display: grid;
+    gap: 8px;
+    margin: 10px 0 14px;
+}
+
+.taskItem {
+    border: 1px solid #e6e8ef;
+    border-radius: 12px;
+    padding: 10px;
+    background: #fff;
+}
+
+.taskTop {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.taskTitle {
+    font-weight: 700;
+}
+
+.taskMeta {
+    color: #667085;
+    font-size: 12px;
+}
+
+.taskBtns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.innerCard {
+    padding: 12px;
+    background: #fafbff;
+}
+
+textarea {
+    padding: 10px;
+    border: 1px solid #d7dbe7;
+    border-radius: 10px;
+    font-size: 14px;
+    resize: vertical;
+}

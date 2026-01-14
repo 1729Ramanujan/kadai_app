@@ -14,6 +14,18 @@ const editEnd = document.getElementById("editEnd");
 const saveCallButton = document.getElementById("saveCallButton");
 const deleteCallButton = document.getElementById("deleteCallButton");
 
+// 課題の追加を行う部分のhtml上の要素をとってきている
+const tasksInfo = document.getElementById("tasksInfo");
+const tasksList = document.getElementById("tasksList");
+const taskTitle = document.getElementById("taskTitle");
+const taskDue = document.getElementById("taskDue");
+const taskDetail = document.getElementById("taskDetail");
+const addTaskbutton = document.getElementById("addTaskbutton");
+
+let selectedCourseId = null;
+let unsubscribeTasks = null;
+const tasksCache = new Map();
+
 // エラーがあれば表示させて、なかったらhiddenをつけて隠すようにする関数（エラー欄の表示・非表示）
 function showError(message) {
     if (!message) {
@@ -278,14 +290,351 @@ logoutButton.addEventListener("click", async () => {
 // ログイン状態かどうかを監視して、違っているのならindex.htmlに戻す関数
 auth.onAuthStateChanged((user) => {
     showError("");
-    if(!user) {
+    if (!user) {
         window.location.href = "./index.html"
         return;
     }
 
-    statusEl.textContent="ログイン済み";
-    userEmailEl.textContent=user.email??"(emailなし)";
+    statusEl.textContent = "ログイン済み";
+    userEmailEl.textContent = user.email ?? "(emailなし)";
 
     buildGridOnce();
     subscribeTimetableCells(user.uid);
+});
+
+// 授業を整理するためのcourseId(授業名とidを紐づけている)を作成する関数
+async function getOrCreateCourseId(uid, courseName) {
+    // まずは授業名をとっていてきる
+    const name = (courseName ?? "").trim();
+    // もし授業名がないならここでnullを返す
+    if (!name) return null;
+
+    // すでに保存されている授業のすべてを一度とってきている
+    const coursesCol = db.collection("users").doc(uid).collection("courses");
+
+    // qという変数を考える。先ほど撮ってきた授業の一覧から、今回受け取った授業名と
+    // 一致しているものがあればその授業をqに保存する
+    const q = await coursesCol.where("name", "==", name).limit(1).get();
+    // もしqに要素が入っていれば
+    if (!q.empty) {
+        // その保存されている授業のデータからidを返す
+        return q.docs[0].id;
+    }
+
+    // もしその授業が登録されていなかったら新しく作る
+    const docRef = await coursesCol.add({
+        name,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    // 新しく作った授業のidを返す
+    return docRef.id;
+}
+
+// 選択中の授業の課題(tasks)をリアルタイムで監視して、更新などがあればすぐに同期するようにしている
+function clearTasksUI(message) {
+    tasksCache.clear();
+    tasksList.innerHTML = "";
+    tasksInfo.textContent = message;
+    addTaskbutton.disabled = true;
+    selectedCourseId = null;
+
+    if (unsubscribeTasks) {
+        unsubscribeTasks();
+        unsubscribeTasks = null;
+    }
+}
+
+function subscribeTasksForCourse(uid, courseId, couseNameForLabel) {
+    if (unsubscribeTasks) {
+        unsubscribeTasks();
+        unsubscribeTasks = null;
+    }
+
+    tasksCache.clear();
+    tasksList.innerHTML = "";
+    selectedCourseId = courseId;
+
+    if (!courseId) {
+        clearTasksUI("このコマは授業が未登録です");
+        return;
+    }
+
+    tasksInfo.textContent = `${couseNameForLabel || "授業"}の課題`;
+    addTaskbutton.disabled = false;
+
+    const tasksCol = db.collection("users").doc(uid).collection("courses").doc(courseId).collection("tasks").orderBy("dueAt", "asc");
+
+    unsubscribeTasks = tasksCol.onSnapshot((snap) => {
+        snap.docChanges().forEach((chg) => {
+            const id = chg.doc.id;
+            if (chg.type === "removed") tasksCache.delete(id);
+            else tasksCache.set(id, chg.doc.data());
+        });
+        renderTasksList();
+    }, (err) => {
+        showError(err?.message ?? "課題の読み込みに失敗しました");
+    });
+}
+
+// 課題の締め切り日時を返す関数
+function formatDue(dueAt) {
+    if (!dueAt) return "締切なし";
+
+    const dt = dueAt.toDate ? dueAt.toDate() : new Date(dueAt);
+
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth() + 1).padStart(2, "0");
+    const d = String(dt.getDate()).padStart(2, "0");
+    const hh = String(dt.getHours()).padStart(2, "0");
+    const mm = String(dt.getMinutes()).padStart(2, "0");
+    return `${y}/${m}/${d} ${hh}:${mm}`;
+}
+
+// 入力された文字がhtmlと解釈されるとハックされる可能性があるから、それの対策として事前に手を打っておく
+function escapeHtml(s) {
+    return String(s ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+function renderTasksList() {
+    const items = Array.from(tasksCache.entries())
+        .map(([id, data]) => ({ id, ...data }))
+        .sort((a, b) => {
+            const at = a.dueAt?.toMillis ? a.dueAt.toMillis() : (a.dueAt ? new Date(a.dueAt).getTime() : Infinity);
+            const bt = b.dueAt?.toMillis ? b.dueAt.toMillis() : (b.dueAt ? new Date(b.dueAt).getTime() : Infinity);
+            return at - bt;
+        });
+
+    if (items.length === 0) {
+        tasksList.innerHTML = `<div class="muted">課題はまだありません</div>`;
+        return;
+    }
+
+    tasksList.innerHTML = items.map(t => {
+        const title = escapeHtml(t.title ?? "(無題)");
+        const due = escapeHtml(formatDue(t.dueAt));
+        const status = t.status ?? "open";
+        const detail = escapeHtml(t.detail ?? "");
+        return `
+      <div class="taskItem" data-task-id="${t.id}">
+        <div class="taskTop">
+          <div>
+            <div class="taskTitle">${title}</div>
+            <div class="taskMeta">締切：${due} ／ 状態：${status}</div>
+          </div>
+        </div>
+
+        <div class="taskBtns">
+          <button type="button" class="secondary" data-action="toggleDetail">詳細</button>
+          <button type="button" data-action="toggleDone">${status === "done" ? "未完了に戻す" : "完了にする"}</button>
+          <button type="button" class="danger" data-action="delete">削除</button>
+        </div>
+
+        <div class="taskDetail muted" data-detail hidden>${detail || "（詳細なし）"}</div>
+      </div>
+    `;
+    }).join("");
+    tasksList.querySelectorAll(".taskItem").forEach((el) => {
+        const taskId = el.dataset.taskId;
+
+        el.addEventListener("click", async (e) => {
+            const btn = e.target.closest("button");
+            if (!btn) return;
+
+            const action = btn.dataset.action;
+            if (!action) return;
+
+            if (action === "toggleDetail") {
+                const detailEl = el.querySelector("[data-detail]");
+                detailEl.hidden = !detailEl.hidden;
+                return;
+            }
+
+            if (action === "delete") {
+                await deleteTask(taskId);
+                return;
+            }
+            if (action === "toggleDone") {
+                await toggleTaskDone(taskId);
+                return;
+            }
+        }, { once: true });
+
+    });
+}
+
+async function addTask() {
+    showError("");
+    const user = auth.currentUser;
+    if (!user) return;
+
+    if (!selectedCourseId) {
+        showError("授業が未登録です。先にこのコマを保存してください。");
+        return;
+    }
+
+    const title = taskTitle.value.trim();
+    if (!title) {
+        showError("課題タイトルを入力してください。");
+        return;
+    }
+
+    let dueAt = null;
+    if (taskDue.value) {
+        const dt = new Date(taskDue.value);
+        if (!isNaN(dt.getTime())) {
+            dueAt = firebase.firestore.Timestamp.fromDate(dt);
+        }
+    }
+
+    const detail = taskDetail.value.trim();
+
+    const tasksCol = db.collection("users").doc(user.uid)
+        .collection("courses").doc(selectedCourseId)
+        .collection("tasks");
+
+    await tasksCol.add({
+        title,
+        dueAt,
+        detail,
+        status: "open",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
+
+    taskTitle.value = "";
+    taskDue.value = "";
+    taskDetail.value = "";
+}
+
+async function deleteTask(taskId) {
+    showError("");
+    const user = auth.currentUser;
+    if (!user) return;
+    if (!selectedCourseId) return;
+
+    const ref = db.collection("users").doc(user.uid)
+        .collection("courses").doc(selectedCourseId)
+        .collection("tasks").doc(taskId);
+
+    await ref.delete();
+}
+
+async function toggleTaskDone(taskId) {
+    showError("");
+    const user = auth.currentUser;
+    if (!user) return;
+    if (!selectedCourseId) return;
+
+    const data = tasksCache.get(taskId);
+    const current = data?.status ?? "open";
+    const next = current === "done" ? "open" : "done";
+
+    const ref = db.collection("users").doc(user.uid)
+        .collection("courses").doc(selectedCourseId)
+        .collection("tasks").doc(taskId);
+
+    await ref.set({
+        status: next,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+}
+
+addTaskbutton.addEventListener("click", async () => {
+    try {
+        await addTask();
+    } catch (err) {
+        showError(err?.message ?? "課題の追加に失敗しました");
+    }
+});
+
+saveCallButton.addEventListener("click", async () => {
+    if (!selectedKey) return;
+    showError("");
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const courseName = editName.value.trim();
+    const start = editStart.value;
+    const end = editEnd.value;
+
+    if (start && end && start >= end) {
+        showError("開始時刻が終了時刻以上になっています。");
+        return;
+    }
+
+    const [day, periodString] = selectedKey.split("_");
+    const period = Number(periodString);
+
+    const courseId = await getOrCreateCourseId(user.uid, courseName);
+
+    const ref = db.collection("users").doc(user.uid)
+        .collection("timetableCells").doc(selectedKey);
+
+    try {
+        await ref.set({
+            day,
+            period,
+            start,
+            end,
+
+
+            courseId: courseId || null,
+            courseName: courseName || "",
+
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+
+
+        subscribeTasksForCourse(user.uid, courseId, courseName);
+
+    } catch (err) {
+        showError(err?.message ?? "保存に失敗しました");
+    }
+});
+
+function selectCell(key) {
+    selectedKey = key;
+
+    document.querySelectorAll(".timetableCell.active").forEach(el => el.classList.remove("active"));
+    const [day, period] = key.split("_");
+    const button = findCellButton(day, Number(period));
+    if (button) button.classList.add("active");
+
+    const dayLabel = days.find(d => d.key === day)?.label ?? day;
+    selectedLabel.textContent = `${dayLabel}曜${period}限`;
+
+    setEditorEnabled(true);
+    fillEditorFromCache(key);
+
+    const user = auth.currentUser;
+    if (user) {
+        const data = callCache.get(key);
+        const courseId = data?.courseId ?? null;
+        const courseName = data?.courseName ?? (data?.name ?? "");
+        subscribeTasksForCourse(user.uid, courseId, courseName);
+    }
+}
+
+auth.onAuthStateChanged((user) => {
+    showError("");
+    if (!user) {
+        window.location.href = "./index.html";
+        return;
+    }
+
+    statusEl.textContent = "ログイン済み";
+    userEmailEl.textContent = user.email ?? "(emailなし)";
+
+    buildGridOnce();
+    subscribeTimetableCells(user.uid);
+
+    clearTasksUI("左のコマを選択すると、その授業の課題が表示されます");
 });
