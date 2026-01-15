@@ -174,7 +174,7 @@ function buildGridOnce() {
 
             const nameSpan = document.createElement("div");
             nameSpan.className = "name";
-            nameSpan.textContent = "未設定";
+            nameSpan.textContent = "";
 
             const timeSpan = document.createElement("div");
             timeSpan.className = "time";
@@ -332,47 +332,78 @@ async function getOrCreateCourseId(uid, courseName) {
 }
 
 // 選択中の授業の課題(tasks)をリアルタイムで監視して、更新などがあればすぐに同期するようにしている
+// 課題のセクションの中身を空にする関数
 function clearTasksUI(message) {
+    // 課題データのキャッシュをからに
     tasksCache.clear();
+    // tasksList(html上の)を空にして、何も表示しないようにしている
     tasksList.innerHTML = "";
+    // 課題の情報のところにメッセージを表示するようにしてい
     tasksInfo.textContent = message;
+    // 課題一覧のところのボタンが反応しないように設定
     addTaskbutton.disabled = true;
+    // 今見ている課題を保存する変数をリセット
     selectedCourseId = null;
 
+    // もし今購読している課題があるなら
     if (unsubscribeTasks) {
         unsubscribeTasks();
+        // nullにして止める
         unsubscribeTasks = null;
     }
 }
 
-function subscribeTasksForCourse(uid, courseId, couseNameForLabel) {
+// 授業の課題をFirebaseからリアルタイムで監視して、常に更新し続けるための関数
+// 引き値：ユーザーid,授業id,授業のタイトル
+// 返り値：なし（監視するだけだから）
+function subscribeTasksForCourse(uid, courseId, courseNameForLabel) {
+    // もし今購読している課題があれば
     if (unsubscribeTasks) {
         unsubscribeTasks();
+        // 購読用の変数をnullにして止める
         unsubscribeTasks = null;
     }
 
+    // キャッシュをリセットする
     tasksCache.clear();
+    // 課題の説明欄を表示しない
     tasksList.innerHTML = "";
+    // courseIdを一旦保存
     selectedCourseId = courseId;
 
+    // もしcourseIdが存在しないものだったら
     if (!courseId) {
+        // エラーメッセージを表示して
         clearTasksUI("このコマは授業が未登録です");
+        // 離脱
         return;
     }
 
-    tasksInfo.textContent = `${couseNameForLabel || "授業"}の課題`;
+    // 課題UIの部分を「授業名＋の課題」と表示してわかりやすく
+    tasksInfo.textContent = `${courseNameForLabel || "授業"}の課題`;
+    // 課題を追加できるようにしている
     addTaskbutton.disabled = false;
 
+    // Firebase上で授業の課題を参照するためのインデックスを変数として用意している
     const tasksCol = db.collection("users").doc(uid).collection("courses").doc(courseId).collection("tasks").orderBy("dueAt", "asc");
 
+    // さっき作った変数を利用して実際にFirebaseからデータをとってきているのがここの行
+    // unsubscribeTasksという関数をとりあえず設定
     unsubscribeTasks = tasksCol.onSnapshot((snap) => {
+        // 課題をFirebaseから送ってもらう。変更があったら追加で送ってもらうように設定。（変更された部分だけを処理）
         snap.docChanges().forEach((chg) => {
+            // 課題のidを一旦保存
             const id = chg.doc.id;
+            // もし課題を消したいときはキャッシュから消す
             if (chg.type === "removed") tasksCache.delete(id);
+            // 消されなかったら上書きして保存する
             else tasksCache.set(id, chg.doc.data());
         });
+        // 右側の課題の表示を更新する
         renderTasksList();
+        // もし失敗したら
     }, (err) => {
+        // エラーを出す
         showError(err?.message ?? "課題の読み込みに失敗しました");
     });
 }
