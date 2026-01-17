@@ -461,7 +461,7 @@ function renderTasksList() {
         </div>
 
         <div class="taskBtns">
-          <button type="button" class="secondary" data-action="toggleDetail">詳細</button>
+          <button type="button" class="secondary" data-action="openDetail">詳細</button>
           <button type="button" data-action="toggleDone">${status === "done" ? "未完了に戻す" : "完了にする"}</button>
           <button type="button" class="danger" data-action="delete">削除</button>
         </div>
@@ -480,16 +480,20 @@ function renderTasksList() {
             const action = btn.dataset.action;
             if (!action) return;
 
-            if (action === "toggleDetail") {
-                const detailEl = el.querySelector("[data-detail]");
-                detailEl.hidden = !detailEl.hidden;
+            // 詳細ボタンが押された時に
+            if (action === "openDetail") {
+                window.location.href =
+                    `./task.html?courseId=${encodeURIComponent(selectedCourseId)}&taskId=${encodeURIComponent(taskId)}`;
                 return;
             }
 
+            // 削除ボタンが押された時に
             if (action === "delete") {
                 await deleteTask(taskId);
                 return;
             }
+
+            // 完了にする・未完了に戻すボタンが押された時に
             if (action === "toggleDone") {
                 await toggleTaskDone(taskId);
                 return;
