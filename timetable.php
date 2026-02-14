@@ -1,12 +1,17 @@
+<?php
+require_once __DIR__ . '/config.php';
+require_login();
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>課題処理アプリ - 時間割</title>
+    <title>時間割</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 
 <body>
     <h1>時間割</h1>
@@ -84,13 +89,18 @@
         </div>
     </div>
 
-    <!-- Firebase導入部分 -->
-    <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
-
-    <script src="./js/firebase.js"></script>
     <script src="./js/timetable.js"></script>
+
+
+
+
+    <!-- ここに、後で timetable.html をPHP/JSに移植していく -->
+    <script>
+        window.CSRF_TOKEN = <?= json_encode($_SESSION['csrf']) ?>;
+        window.USER_EMAIL = <?= json_encode($_SESSION['user_email'] ?? '') ?>;
+        window.CSRF_TOKEN = <?= json_encode($_SESSION['csrf']) ?>;
+    </script>
+
 </body>
 
 </html>
