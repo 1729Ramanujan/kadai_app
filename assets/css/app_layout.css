@@ -1,0 +1,367 @@
+/* ---------- App header ---------- */
+.appHeader {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+    height: var(--app-header-h);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(104, 161, 129, 0.20);
+}
+
+.appHeaderInner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 var(--page-pad);
+}
+
+.appHeaderLogo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 900;
+    letter-spacing: 0.01em;
+}
+
+.appHeaderLogo:hover {
+    color: var(--text);
+    text-decoration: none;
+}
+
+.appHeaderLogoText {
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+}
+
+.appHeaderLogoAccent {
+    color: var(--accent);
+}
+
+.appHeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.appHeaderBell {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid rgba(104, 161, 129, 0.24);
+    box-shadow: 0 6px 18px rgba(41, 84, 62, 0.06);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.appHeaderBell:hover {
+    transform: translateY(-1px);
+    background: var(--surface-2);
+    box-shadow: 0 10px 22px rgba(41, 84, 62, 0.08);
+    color: var(--text);
+    text-decoration: none;
+}
+
+.appHeaderBellIcon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.1;
+}
+
+.appHeaderBellBadge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5484d;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 0 0 3px #ffffff;
+}
+
+.appHeaderBellLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (min-width: 1100px) {
+    .appHeaderInner {
+        padding: 0 var(--page-pad-lg);
+    }
+}
+
+@media (max-width: 768px) {
+    .appHeader {
+        height: 64px;
+    }
+
+    .appHeaderInner {
+        padding: 0 14px;
+    }
+
+    .appHeaderLogoText {
+        font-size: 23px;
+    }
+
+    .appHeaderBell {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+
+/* =========================
+   Shared sidebar
+   ========================= */
+
+.appShell {
+    min-height: 100dvh;
+}
+
+.appShell--withHeader {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+}
+
+.appBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    gap: var(--app-gap);
+    padding: var(--page-pad);
+    overflow: visible;
+    align-items: stretch;
+    position: relative;
+}
+
+.sideNavSlot {
+    position: relative;
+    flex: 0 0 var(--sidebar-mini);
+    min-width: var(--sidebar-mini);
+    /* align-self: stretch; */
+}
+
+.sideNav {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 64px;
+    height: calc(100dvh - 64px);
+    overflow: hidden;
+
+    padding: 10px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    z-index: 60;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    transition: width 180ms ease;
+}
+
+.sideNav:hover,
+.sideNav:focus-within {
+    width: var(--sidebar-open);
+}
+
+.sideNavItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 14px;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 900;
+    border: 1px solid transparent;
+}
+
+.sideNavItem:hover {
+    background: rgba(88, 184, 119, 0.12);
+    border-color: rgba(88, 184, 119, 0.24);
+    text-decoration: none;
+}
+
+.sideNavIcon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.sideNavLabel {
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 160ms ease, transform 160ms ease;
+    line-height: 1;
+}
+
+.sideNav:hover .sideNavLabel,
+.sideNav:focus-within .sideNavLabel {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.pageMain {
+    margin-left: calc(var(--sidebar-mini) + 12px);
+    min-height: 100dvh;
+    padding: 0;
+    transition: margin-left 180ms ease;
+}
+
+.appShell--withHeader .sideNav {
+    position: fixed;
+    top: calc(var(--app-header-h) + var(--page-pad));
+    left: var(--page-pad);
+
+    width: var(--sidebar-mini);
+    min-width: var(--sidebar-mini);
+    height: calc(100dvh - var(--app-header-h) - (var(--page-pad) * 2));
+
+    padding: 10px 8px;
+    overflow: hidden;
+    z-index: 90;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    isolation: isolate;
+    transition: width 180ms ease;
+}
+
+.appShell--withHeader .sideNav:hover,
+.appShell--withHeader .sideNav:focus-within {
+    width: var(--sidebar-open);
+    min-width: var(--sidebar-mini);
+}
+
+
+.appShell--withHeader .pageMain {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: calc(100dvh - var(--app-header-h) - (var(--page-pad) * 2));
+    overflow: visible;
+}
+
+.appBody>.sideNavSlot+.pageMain {
+    margin-left: 0;
+}
+
+@media (min-width: 1100px) {
+    .appBody {
+        padding: var(--page-pad-lg);
+    }
+
+    .appShell--withHeader .sideNav {
+        top: calc(var(--app-header-h) + var(--page-pad-lg));
+        left: var(--page-pad-lg);
+        height: calc(100dvh - var(--app-header-h) - (var(--page-pad-lg) * 2));
+    }
+
+    .appShell--withHeader .pageMain {
+        min-height: calc(100dvh - var(--app-header-h) - (var(--page-pad-lg) * 2));
+    }
+}
+
+
+@media (max-width: 900px) {
+    body.page--withAppHeader {
+        overflow: visible;
+    }
+
+    .appShell--withHeader {
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .appBody {
+        display: block;
+        padding: 16px;
+        overflow: visible;
+    }
+
+    .sideNav {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        margin-bottom: 16px;
+        padding: 12px;
+    }
+
+    .sideNavSlot {
+        flex: none;
+        min-width: 0;
+    }
+
+    .sideNav:hover,
+    .sideNav:focus-within {
+        width: auto;
+    }
+
+    .sideNavLabel {
+        opacity: 1;
+        transform: none;
+    }
+
+    .pageMain {
+        margin-left: 0;
+        min-height: auto;
+    }
+
+    .appShell--withHeader .sideNav {
+        position: static;
+        top: auto;
+        left: auto;
+        width: auto;
+        min-width: 0;
+        height: auto;
+    }
+
+    .appShell--withHeader .sideNav:hover,
+    .appShell--withHeader .sideNav:focus-within {
+        width: auto;
+        flex-basis: auto;
+    }
+
+    .appShell--withHeader .pageMain {
+        overflow: visible;
+    }
+}

@@ -1,0 +1,1010 @@
+/* =========================
+   task.php only
+   ========================= */
+
+:root {
+    --workbenchH: 520px;
+    --gradeH: 420px;
+    --assistantTop: 96px;
+    --assistantBottom: 20px;
+    --assistantWidth: min(420px, calc(100vw - 24px));
+    --assistantPeek: 15px;
+    --assistantMiniFabSize: 58px;
+
+    --taskBorder: rgba(104, 161, 129, 0.28);
+    --taskBorderSoft: rgba(104, 161, 129, 0.22);
+    --taskBgSoft: #eff8f2;
+    --taskBgHover: rgba(88, 184, 119, 0.12);
+    --taskTextMuted: #6f8f81;
+    --taskShadowSoft: 0 8px 24px rgba(41, 84, 62, 0.07);
+    --taskShadowStrong: 0 18px 42px rgba(41, 84, 62, 0.16);
+    --taskFocus: 0 0 0 4px rgba(88, 184, 119, 0.18);
+}
+
+/* -------------------------
+   page layout
+------------------------- */
+.pageMain.pageMain--task {
+    min-height: 0;
+    overflow: auto;
+    /* ドロワー開閉に合わせて右側を滑らかに縮める
+       padding-right ではなく margin-right を使う：
+       padding-right は overflow:auto のスクロール余白になるだけで
+       flex アイテム自体は縮まないが、margin-right はフレックスアイテムの
+       外側サイズに影響し、ボックス本体が実際に狭くなる */
+    transition: margin-right 0.28s ease;
+}
+
+/* デスクトップ：ドロワーが開いたらコンテンツをその幅分押し込む */
+@media (min-width: 981px) {
+    body.taskAssistantOpen .pageMain.pageMain--task {
+        margin-right: calc(var(--assistantWidth) - var(--assistantPeek) + 16px);
+    }
+}
+
+.pageContent.pageContent--task {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding-bottom: 28px;
+}
+
+.taskFlashCard {
+    margin-top: 0;
+}
+
+.taskHero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.taskHeroMain {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.taskHeroCourse {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--taskTextMuted);
+}
+
+.taskHeroTitle {
+    margin: 0;
+    font-size: 28px;
+    line-height: 1.28;
+    letter-spacing: 0.01em;
+    word-break: break-word;
+}
+
+.taskHeroMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.taskMetaChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #f5faf7;
+    border: 1px solid var(--taskBorderSoft);
+}
+
+.taskMetaLabel {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--taskTextMuted);
+}
+
+.taskMetaValue {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text);
+}
+
+.taskHeroActions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex: 0 0 auto;
+}
+
+.taskMainGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.28fr) minmax(320px, 0.82fr);
+    gap: 16px;
+    align-items: stretch;
+}
+
+.taskFeedbackSection {
+    margin-top: 0;
+}
+
+.taskDetailCard,
+.taskFilesCard {
+    margin-top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.taskSectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.taskSectionHeader--feedback {
+    margin-bottom: 10px;
+}
+
+.taskSectionTitle {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.35;
+}
+
+.taskBodyText {
+    flex: 1 1 auto;
+    white-space: pre-wrap;
+    line-height: 1.8;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.taskEditTopActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.taskFormError {
+    margin-bottom: 12px;
+}
+
+.taskEditForm {
+    gap: 12px;
+}
+
+/* -------------------------
+   file section
+------------------------- */
+.taskUploadForm {
+    gap: 12px;
+}
+
+.taskUploadHelp {
+    margin: 0;
+}
+
+.taskFileList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.taskFileItem {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--taskBorderSoft);
+    border-radius: 14px;
+    background: #fcfffd;
+}
+
+.taskFileMain {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: grid;
+    gap: 8px;
+}
+
+.taskFileMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    color: var(--taskTextMuted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.taskFileDeleteForm {
+    flex: 0 0 auto;
+}
+
+/* -------------------------
+   common inner blocks
+------------------------- */
+.innerCard {
+    border: 1px solid var(--taskBorderSoft);
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: var(--taskShadowSoft);
+}
+
+.card h3 {
+    line-height: 1.4;
+}
+
+.muted {
+    color: var(--taskTextMuted);
+}
+
+.buttonRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid var(--taskBorderSoft);
+    margin: 18px 0;
+}
+
+/* -------------------------
+   state badge
+------------------------- */
+.taskState {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    border: 1px solid transparent;
+}
+
+.taskState.is-open {
+    background: rgba(200, 92, 92, 0.14);
+    color: #bf4f4f;
+    border-color: rgba(200, 92, 92, 0.22);
+}
+
+.taskState.is-done {
+    background: rgba(51, 168, 107, 0.14);
+    color: #2d8a58;
+    border-color: rgba(51, 168, 107, 0.22);
+}
+
+
+.workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.18fr);
+    gap: 14px;
+    align-items: stretch;
+}
+
+.pane {
+    min-width: 0;
+    border: 1px solid var(--taskBorderSoft);
+    border-radius: 16px;
+    background: #ffffff;
+    padding: 16px;
+    box-shadow: var(--taskShadowSoft);
+}
+
+.paneHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.paneHeader h3 {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.workbench .pane {
+    display: flex;
+    flex-direction: column;
+    height: var(--workbenchH);
+    min-height: 0;
+}
+
+.workbench .paneHeader,
+.workbench .pane>p.muted,
+.workbench .pane>.buttonRow,
+.workbench .pane>#docsStatus,
+.workbench .pane>#docLink {
+    flex: 0 0 auto;
+}
+
+/* -------------------------
+   AIã‚¬ã‚¤ãƒ€ãƒ³ã‚¹
+------------------------- */
+#aiBox {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    margin-top: 10px;
+    padding: 14px;
+    border: 1px solid var(--taskBorderSoft);
+    border-radius: 12px;
+    background: var(--taskBgSoft);
+}
+
+#aiText {
+    white-space: pre-wrap;
+    line-height: 1.75;
+    word-break: break-word;
+}
+
+.draftMetaRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0 10px;
+}
+
+.draftMetaRow .muted {
+    margin: 0;
+}
+
+#draftCount {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+#draft {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    overflow: auto;
+    resize: none;
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--taskBorder);
+    border-radius: 12px;
+    background: #ffffff;
+    line-height: 1.7;
+    font-size: 14px;
+    color: var(--text);
+}
+
+#draft:focus {
+    outline: none;
+    border-color: #58b877;
+    box-shadow: var(--taskFocus);
+}
+
+
+.taskAssistantDrawer {
+    position: fixed;
+    top: var(--assistantTop);
+    right: 0;
+    width: var(--assistantWidth);
+    height: calc(100dvh - var(--assistantTop) - var(--assistantBottom));
+    z-index: 90;
+    pointer-events: none;
+}
+
+.taskAssistantPanel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--taskBorderSoft);
+    border-right: none;
+    border-radius: 22px 0 0 22px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--taskShadowStrong);
+    overflow: visible;
+    transform: translateX(calc(100% - var(--assistantPeek)));
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+    pointer-events: auto;
+}
+
+.taskAssistantDrawer.is-open .taskAssistantPanel {
+    transform: translateX(0);
+}
+
+.taskAssistantHandle {
+    position: absolute;
+    left: calc(-1 * var(--assistantPeek));
+    top: 50%;
+    transform: translateY(-50%);
+    width: var(--assistantPeek);
+    height: 118px;
+    border: 1px solid var(--taskBorderSoft);
+    border-right: none;
+    border-radius: 18px 0 0 18px;
+    background: rgba(255, 255, 255, 0.98);
+    color: #2d8a58;
+    box-shadow: 0 12px 28px rgba(41, 84, 62, 0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.taskAssistantHandle:active {
+    transform: translateY(calc(-50% + 1px)) !important;
+}
+
+.taskAssistantHandle:hover {
+    background: #ffffff;
+    box-shadow:
+        0 0 0 4px rgba(88, 184, 119, 0.14),
+        0 0 18px rgba(88, 184, 119, 0.22),
+        0 14px 30px rgba(41, 84, 62, 0.12);
+    transform: translateY(-50%) translateX(-2px);
+}
+
+
+.taskAssistantHandle:focus-visible,
+.taskAssistantClose:focus-visible,
+.taskAssistantTab:focus-visible,
+.taskAssistantMiniFab:focus-visible {
+    outline: none;
+    box-shadow: var(--taskFocus);
+}
+
+.taskAssistantHandleIcon,
+.taskAssistantMiniFab i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.taskAssistantHandleText {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+}
+
+.taskAssistantHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--taskBorderSoft);
+    background: linear-gradient(180deg, rgba(239, 248, 242, 0.94) 0%, rgba(255, 255, 255, 0.94) 100%);
+}
+
+
+.taskAssistantEyebrow {
+    margin: 0 0 4px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: var(--taskTextMuted);
+}
+
+.taskAssistantTitle {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.35;
+}
+
+button.taskAssistantClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid var(--taskBorderSoft);
+    background: #ffffff;
+    color: var(--taskTextMuted);
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+
+button.taskAssistantClose svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.2;
+}
+
+.taskAssistantTabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 14px 18px 0;
+}
+
+button.taskAssistantTab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--taskBorderSoft);
+    background: #f8fbf9;
+    color: var(--taskTextMuted);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+button.taskAssistantTab.is-active {
+    background: rgba(88, 184, 119, 0.12);
+    color: #2d8a58;
+    border-color: rgba(88, 184, 119, 0.34);
+}
+
+.taskAssistantBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    padding: 16px 18px 18px;
+}
+
+.assistSection {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.assistSection.is-active {
+    display: flex;
+}
+
+.taskAssistantSectionHeader {
+    margin-bottom: 12px;
+}
+
+.taskAssistantSectionHeader h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.taskAssistantSectionHeader .muted {
+    margin: 6px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.taskAssistantBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.18);
+    z-index: 80;
+}
+
+@media (min-width: 981px) {
+    .taskAssistantBackdrop {
+        display: none;
+    }
+}
+
+.taskAssistantMiniFab {
+    position: fixed;
+    right: 20px;
+    bottom: 18px;
+    z-index: 85;
+    width: auto;
+    min-width: var(--assistantMiniFabSize);
+    height: var(--assistantMiniFabSize);
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--taskBorderSoft);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 14px 28px rgba(41, 84, 62, 0.18);
+    color: #1e8a67;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+body.taskAssistantOpen .taskAssistantMiniFab {
+    display: none;
+}
+
+
+/* -------------------------
+   AI相談モード選択
+------------------------- */
+.taskChatModeControl {
+    margin: 0 0 12px;
+}
+
+.taskChatModeLabel {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--taskTextMuted);
+    line-height: 1.5;
+}
+
+.taskChatModeSelect {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 14px;
+    border: 1px solid var(--taskBorder);
+    border-radius: 12px;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(41, 84, 62, 0.03);
+}
+
+.taskChatModeSelect:focus {
+    outline: none;
+    border-color: #58b877;
+    box-shadow: var(--taskFocus);
+}
+
+.taskAiProviderButtons {
+    margin-top: 8px;
+}
+
+.taskAiModelLabel {
+    margin-top: 12px;
+    display: block;
+}
+
+#aiProviderButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#aiProviderButtons .button {
+    min-width: 110px;
+    justify-content: center;
+}
+
+#aiProviderButtons .button.is-active {
+    box-shadow: inset 0 0 0 1px rgba(88, 184, 119, 0.22);
+}
+
+#aiModelSelect {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--taskBorder);
+    border-radius: 12px;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 1.4;
+    margin-top: 6px;
+    color: var(--text);
+}
+
+#aiModelSelect:focus {
+    outline: none;
+    border-color: #58b877;
+    box-shadow: var(--taskFocus);
+}
+
+#aiSelectedInfo {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--taskTextMuted);
+}
+
+.chatStage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+}
+
+#chatHistory {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 12px;
+    border: 1px solid var(--taskBorderSoft);
+    border-radius: 12px;
+    background: #f8fdf9;
+}
+
+#chatEmpty {
+    margin: 8px 0 0;
+}
+
+.chatForm {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.chatFormActions {
+    justify-content: flex-end;
+}
+
+#chatInput {
+    width: 100%;
+    min-height: 77px;
+    max-height: 160px;
+    resize: vertical;
+    padding: 14px 16px;
+    border: 1px solid var(--taskBorder);
+    border-radius: 12px;
+    background: #ffffff;
+    line-height: 1.7;
+    font-size: 14px;
+    color: var(--text);
+}
+
+#chatInput:focus {
+    outline: none;
+    border-color: #58b877;
+    box-shadow: var(--taskFocus);
+}
+
+.chatMessage {
+    border: 1px solid rgba(104, 161, 129, 0.2);
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(41, 84, 62, 0.03);
+}
+
+.chatMessage:first-child {
+    margin-top: 0;
+}
+
+.chatMessage--user {
+    background: #f3fbf5;
+}
+
+.chatMessage--assistant {
+    background: #ffffff;
+}
+
+.chatMessage--system {
+    background: #f0f8f3;
+}
+
+.chatMessageMeta {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+.chatMessageBody {
+    white-space: pre-wrap;
+    line-height: 1.7;
+    word-break: break-word;
+}
+
+
+#docsStatus {
+    min-height: 1.5em;
+}
+
+#docLink {
+    margin-top: 6px;
+}
+
+#gradeCard {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border: 1px solid var(--taskBorderSoft);
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: var(--taskShadowSoft);
+    padding: 16px;
+    height: var(--gradeH);
+    max-height: var(--gradeH);
+}
+
+#gradeStatus {
+    min-height: 1.5em;
+    color: var(--taskTextMuted);
+    margin-bottom: 10px;
+}
+
+#gradeBox {
+    min-height: 0;
+    overflow: auto;
+    padding: 16px;
+    border: 1px solid var(--taskBorderSoft);
+    border-radius: 12px;
+    background: var(--taskBgSoft);
+}
+
+.gradeScoreRow {
+    display: flex;
+    gap: 12px 18px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#gradeBox h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+}
+
+.gradeBlockTitle {
+    margin-top: 12px !important;
+}
+
+#gradeGood,
+#gradeBad,
+#gradeNext {
+    margin: 0;
+    padding-left: 20px;
+    line-height: 1.7;
+}
+
+#gradeGood li,
+#gradeBad li,
+#gradeNext li {
+    margin-bottom: 6px;
+}
+
+#gradeSummary {
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* -------------------------
+   tablet
+------------------------- */
+@media (max-width: 1200px) {
+    .taskMainGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .workbench {
+        grid-template-columns: 1fr;
+    }
+
+    :root {
+        --workbenchH: 460px;
+        --assistantWidth: min(400px, calc(100vw - 18px));
+    }
+}
+
+/* -------------------------
+   mobile
+------------------------- */
+@media (max-width: 980px) {
+    .taskHero {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .taskHeroActions {
+        justify-content: flex-start;
+    }
+
+    :root {
+        --gradeH: 360px;
+        --workbenchH: auto;
+        --assistantTop: 82px;
+        --assistantBottom: 10px;
+        --assistantPeek: 0px;
+        --assistantWidth: calc(100vw - 10px);
+    }
+
+    .workbench .pane {
+        height: auto;
+        min-height: 360px;
+    }
+
+    .paneHeader {
+        align-items: stretch;
+    }
+
+    .taskFileItem {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .taskFileDeleteForm {
+        align-self: flex-start;
+    }
+
+    .taskAssistantPanel {
+        border-right: 1px solid var(--taskBorderSoft);
+        border-radius: 22px;
+        transform: translateX(calc(100% + 12px));
+    }
+
+    button.taskAssistantHandle {
+        display: none;
+    }
+
+    .taskAssistantMiniFab {
+        display: inline-flex;
+    }
+}
+
+@media (max-width: 640px) {
+    .taskHeroTitle {
+        font-size: 24px;
+    }
+
+    .pane,
+    #gradeCard,
+    .innerCard,
+    .taskAssistantPanel {
+        border-radius: 14px;
+    }
+
+    #chatInput {
+        min-height: 110px;
+    }
+
+    #aiProviderButtons .button {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 0;
+    }
+
+    .buttonRow {
+        align-items: stretch;
+    }
+
+    .pageContent.pageContent--task {
+        padding-bottom: 18px;
+    }
+
+    .taskAssistantBody {
+        padding: 14px;
+    }
+
+    .taskAssistantTabs {
+        padding: 12px 14px 0;
+        gap: 8px;
+    }
+
+    .taskAssistantTab {
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+
+    .taskAssistantHeader {
+        padding: 16px 14px 12px;
+    }
+
+    .taskChatModeSelect {
+        min-height: 42px;
+        font-size: 13px;
+    }
+}

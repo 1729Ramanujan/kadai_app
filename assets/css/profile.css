@@ -1,0 +1,364 @@
+/* =========================
+   Profile page only
+   Flat / clean version
+   ========================= */
+
+.profilePage .pageMain {
+    max-width: 1080px;
+    width: 100%;
+    padding-right: 14px;
+    display: grid;
+    gap: 22px;
+    align-content: start;
+}
+
+.profilePage .divider {
+    display: none;
+}
+
+/* ---------- Cards ---------- */
+
+.profilePage .card {
+    margin: 0;
+    padding: 28px 30px 24px;
+    border-radius: 22px;
+    border: 1px solid rgba(104, 161, 129, 0.24);
+    box-shadow:
+        0 12px 30px rgba(41, 84, 62, 0.08),
+        0 2px 8px rgba(41, 84, 62, 0.04);
+    background: #FFFFFF;
+}
+
+.profilePage .card h3 {
+    margin: 0 0 16px;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+}
+
+.profilePage .card p:last-child {
+    margin-bottom: 0;
+}
+
+.profilePage .muted {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+}
+
+/* ---------- Profile settings card ---------- */
+
+.profilePage .profileSettingsCard {
+    display: grid;
+    gap: 0;
+}
+
+.profilePage .profileSettingBlock {
+    display: grid;
+    gap: 10px;
+    padding: 20px 0;
+}
+
+.profilePage .profileSettingBlock:first-of-type {
+    padding-top: 8px;
+}
+
+.profilePage .profileSettingBlock+.profileSettingBlock {
+    border-top: 1px solid rgba(104, 161, 129, 0.18);
+}
+
+.profilePage .profileStatus+.profileSettingBlock {
+    border-top: 1px solid rgba(104, 161, 129, 0.18);
+    padding-top: 20px;
+}
+
+.profilePage .profileSettingLabel {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    text-transform: none;
+}
+
+.profilePage .profileSettingLabel--danger {
+    color: var(--danger);
+}
+
+.profilePage .profileAccountEmail {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--text);
+    word-break: break-all;
+}
+
+.profilePage .profileHelp {
+    margin-top: 0;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+}
+
+.profilePage .profileDangerZone {
+    display: grid;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(200, 92, 92, 0.20);
+}
+
+.profilePage .profileDangerZone .danger {
+    min-width: 180px;
+}
+
+/* ---------- Forms ---------- */
+
+.profilePage .form {
+    display: grid;
+    gap: 16px;
+}
+
+.profilePage label {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.5;
+    color: var(--text);
+}
+
+.profilePage input:not([type="checkbox"]),
+.profilePage textarea,
+.profilePage select {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid rgba(104, 161, 129, 0.24);
+    border-radius: 14px;
+    font-size: 15px;
+    color: var(--text);
+    background: #FFFFFF;
+    box-shadow: inset 0 1px 2px rgba(41, 84, 62, 0.03);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.profilePage input:not([type="checkbox"]):focus,
+.profilePage textarea:focus,
+.profilePage select:focus {
+    outline: none;
+    border-color: rgba(88, 184, 119, 0.78);
+    box-shadow: 0 0 0 4px rgba(88, 184, 119, 0.16);
+    background: #FFFFFF;
+}
+
+.profilePage textarea {
+    min-height: 124px;
+    resize: vertical;
+}
+
+/* checkboxだけ共通の width:100% を打ち消す */
+.profilePage input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    outline: none;
+    flex: 0 0 auto;
+    accent-color: var(--accent);
+    transform: scale(1.15);
+    cursor: pointer;
+}
+
+/* 通知設定のチェック行 */
+.profilePage .profileToggle,
+.profilePage label[style*="display:flex"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    width: fit-content;
+    max-width: 100%;
+    margin: 4px 0 6px !important;
+    line-height: 1.5;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.profilePage .profileFieldLabel {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+/* ---------- Time setting rows ---------- */
+
+.profilePage .timeRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.profilePage .timeRow label {
+    min-width: 0;
+}
+
+/* ---------- Buttons ---------- */
+
+.profilePage .buttonRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.profilePage .buttonRow>* {
+    min-width: 138px;
+}
+
+.profilePage .card form[style*="margin-top:8px;"] {
+    margin-top: 12px !important;
+}
+
+.profilePage button,
+.profilePage .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 18px;
+    font-size: 15px;
+    border-radius: 999px;
+    text-decoration: none;
+}
+
+/* ---------- Links / text ---------- */
+
+.profilePage a[href^="http"] {
+    word-break: break-all;
+}
+
+.profilePage .card strong {
+    font-weight: 900;
+}
+
+.profilePage .card p+.buttonRow,
+.profilePage .card p+form,
+.profilePage .card .muted+.buttonRow {
+    margin-top: 12px;
+}
+
+/* ---------- Status ---------- */
+
+.profilePage .profileStatus {
+    margin: 4px 0;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 700;
+}
+
+.profilePage .profileStatus--success {
+    color: #1d6b43;
+    background: rgba(88, 184, 119, 0.12);
+    border: 1px solid rgba(88, 184, 119, 0.24);
+}
+
+.profilePage .profileStatus--error {
+    color: #9b2c2c;
+    background: rgba(200, 92, 92, 0.10);
+    border: 1px solid rgba(200, 92, 92, 0.22);
+}
+
+/* ---------- Optional subtle section spacing polish ---------- */
+
+.profilePage .card+.card {
+    margin-top: 0;
+}
+
+/* ---------- Spacious desktop layout ---------- */
+
+@media (min-width: 980px) {
+    .profilePage .pageMain {
+        gap: 24px;
+    }
+
+    .profilePage .card {
+        padding: 30px 34px 26px;
+    }
+
+    .profilePage .card h3 {
+        font-size: 21px;
+    }
+
+    .profilePage .muted {
+        max-width: 780px;
+    }
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 900px) {
+    .profilePage .pageMain {
+        max-width: none;
+        padding-right: 0;
+    }
+
+    .profilePage .card {
+        padding: 22px 18px;
+        border-radius: 18px;
+    }
+
+    .profilePage .card h3 {
+        font-size: 18px;
+    }
+
+    .profilePage .timeRow {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 640px) {
+    .profilePage .pageMain {
+        gap: 16px;
+    }
+
+    .profilePage .card {
+        padding: 18px 16px;
+    }
+
+    .profilePage .card h3 {
+        font-size: 17px;
+    }
+
+    .profilePage .buttonRow {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profilePage .buttonRow>* {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .profilePage .profileToggle,
+    .profilePage label[style*="display:flex"] {
+        align-items: flex-start !important;
+    }
+
+    .profilePage input[type="checkbox"] {
+        margin-top: 2px;
+    }
+}

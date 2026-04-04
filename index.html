@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学生向け時間割アプリ</title>
+    <meta name="description" content="授業・課題・提出管理をひとつにまとめる大学生向け時間割アプリ">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/lp.css">
+</head>
+
+<body class="lp-page">
+    <main>
+        <section class="hero">
+            <div class="container hero-inner">
+                <div>
+                    <span class="eyebrow">大学生向け時間割・課題管理アプリ</span>
+                    <h1>授業も課題も、<br>ひとつの画面で迷わない。</h1>
+                    <p class="lead">
+                        毎週の授業予定、提出期限、やるべき課題をまとめて管理。
+                        大学生が日々の学習を整理しやすいように設計した時間割アプリです。
+                    </p>
+
+                    <div class="cta-row">
+                        <a href="auth/signup_view.php" class="btn btn-primary">無料で始める</a>
+                        <a href="auth/login_view.php" class="btn btn-secondary">ログイン</a>
+                        <a href="google/google_login_start.php?return=../timetable/timetable.php"
+                            class="btn btn-secondary">Googleでログイン</a>
+                    </div>
+
+                    <p class="mini-note">
+                        新規登録後はそのまま時間割ページへ移動できます。
+                    </p>
+                </div>
+
+                <div class="hero-card">
+                    <div class="mock-window">
+                        <div class="mock-topbar">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                        <div class="mock-body">
+                            <p class="mock-title">今週の時間割イメージ</p>
+                            <div class="grid">
+                                <div class="cell head"></div>
+                                <div class="cell head">月</div>
+                                <div class="cell head">火</div>
+                                <div class="cell head">水</div>
+                                <div class="cell head">木</div>
+                                <div class="cell head">金</div>
+
+                                <div class="cell time">1限</div>
+                                <div class="cell"><span class="tag">経済学</span><br>教室A201</div>
+                                <div class="cell"><span class="tag">空き</span></div>
+                                <div class="cell"><span class="tag">英語</span><br>レポート提出</div>
+                                <div class="cell"><span class="tag">統計</span><br>小テスト</div>
+                                <div class="cell"><span class="tag">空き</span></div>
+
+                                <div class="cell time">2限</div>
+                                <div class="cell"><span class="tag">線形代数</span></div>
+                                <div class="cell"><span class="tag">情報</span><br>課題あり</div>
+                                <div class="cell"><span class="tag">空き</span></div>
+                                <div class="cell"><span class="tag">情報</span></div>
+                                <div class="cell"><span class="tag">ゼミ</span></div>
+
+                                <div class="cell time">3限</div>
+                                <div class="cell"><span class="tag">空き</span></div>
+                                <div class="cell"><span class="tag">フランス語</span></div>
+                                <div class="cell"><span class="tag">課題整理</span></div>
+                                <div class="cell"><span class="tag">空き</span></div>
+                                <div class="cell"><span class="tag">提出締切</span><br>23:59</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <h2>このアプリでできること</h2>
+                <p class="section-lead">
+                    毎週同じ授業を見るだけでなく、課題提出まで含めて管理しやすくするための機能をまとめています。
+                </p>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>時間割をひと目で確認</h3>
+                        <p>
+                            曜日ごとの授業を一覧化し、空きコマや授業の偏りもすぐに把握できます。
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>課題の締切を見逃しにくい</h3>
+                        <p>
+                            授業ごとの課題を整理できるので、提出忘れや直前の混乱を減らせます。
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>大学生活の管理をシンプルに</h3>
+                        <p>
+                            LMSと時間割を行き来する手間を減らし、学習の流れをひとつにつなげられます。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="footer-cta">
+            <div class="container">
+                <div class="footer-box">
+                    <h2>まずはアカウントを作成して始めましょう</h2>
+                    <p>
+                        メールアドレスでも、Googleアカウントでもログインできます。
+                    </p>
+                    <div class="cta-row">
+                        <a href="auth/signup_view.php" class="btn btn-primary">新規登録</a>
+                        <a href="auth/login_view.php" class="btn btn-secondary">ログイン</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

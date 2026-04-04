@@ -1,0 +1,312 @@
+/* =========================
+   LP only
+   index.html 専用
+   ========================= */
+
+.lp-page {
+    --lp-primary: #58B877;
+    --lp-primary-dark: #3F8E5C;
+    --lp-accent-bg: #EFF8F2;
+
+    padding: 0;
+    background:
+        radial-gradient(circle at top left, rgba(88, 184, 119, 0.16) 0%, transparent 30%),
+        radial-gradient(circle at top right, rgba(88, 184, 119, 0.10) 0%, transparent 28%),
+        linear-gradient(180deg, #F7FCF8 0%, #EEF7F1 100%);
+    line-height: 1.7;
+}
+
+.lp-page .container {
+    width: min(1120px, calc(100% - 32px));
+    margin: 0 auto;
+}
+
+.lp-page .hero {
+    padding: 72px 0 56px;
+}
+
+.lp-page .hero-inner {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 28px;
+    align-items: center;
+}
+
+.lp-page .eyebrow {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--lp-accent-bg);
+    color: var(--lp-primary-dark);
+    border: 1px solid rgba(104, 161, 129, 0.26);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.lp-page .hero h1 {
+    margin: 0 0 18px;
+    font-size: clamp(34px, 5vw, 56px);
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    color: var(--text);
+}
+
+.lp-page .lead {
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 17px;
+}
+
+.lp-page .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.lp-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 18px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    font-weight: 700;
+    transition: 0.2s ease;
+    text-decoration: none;
+}
+
+.lp-page .btn-primary {
+    background: var(--lp-primary);
+    color: #FFFFFF;
+    border-color: var(--lp-primary);
+}
+
+.lp-page .btn-primary:hover {
+    background: var(--lp-primary-dark);
+    border-color: var(--lp-primary-dark);
+    text-decoration: none;
+}
+
+.lp-page .btn-secondary {
+    background: #FFFFFF;
+    color: var(--text);
+    border-color: rgba(104, 161, 129, 0.28);
+}
+
+.lp-page .btn-secondary:hover {
+    background: #EFF8F2;
+    border-color: #58B877;
+    text-decoration: none;
+}
+
+.lp-page .mini-note {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.lp-page .hero-card {
+    background: rgba(255, 255, 255, 0.84);
+    border: 1px solid rgba(104, 161, 129, 0.24);
+    box-shadow: 0 18px 40px rgba(41, 84, 62, 0.10);
+    border-radius: 28px;
+    padding: 24px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.lp-page .mock-window {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F7FCF8 100%);
+    border: 1px solid rgba(104, 161, 129, 0.26);
+    border-radius: 22px;
+    overflow: hidden;
+}
+
+.lp-page .mock-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    background: #EFF8F2;
+    border-bottom: 1px solid rgba(104, 161, 129, 0.22);
+}
+
+.lp-page .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #58B877;
+    opacity: 0.8;
+}
+
+.lp-page .mock-body {
+    padding: 18px;
+}
+
+.lp-page .mock-title {
+    margin: 0 0 14px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.lp-page .grid {
+    display: grid;
+    grid-template-columns: 84px repeat(5, 1fr);
+    gap: 8px;
+}
+
+.lp-page .cell {
+    min-height: 64px;
+    border-radius: 14px;
+    background: #FFFFFF;
+    border: 1px solid rgba(104, 161, 129, 0.26);
+    padding: 10px;
+    font-size: 13px;
+    color: var(--text);
+}
+
+.lp-page .cell.head {
+    min-height: auto;
+    text-align: center;
+    font-weight: 700;
+    background: rgba(88, 184, 119, 0.12);
+    color: var(--lp-primary-dark);
+}
+
+.lp-page .cell.time {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--muted);
+    background: transparent;
+    border-color: transparent;
+}
+
+.lp-page .tag {
+    display: inline-block;
+    margin-bottom: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(111, 143, 184, 0.14);
+    color: var(--lp-primary-dark);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.lp-page .section {
+    padding: 18px 0 64px;
+}
+
+.lp-page .section h2 {
+    margin: 0 0 12px;
+    font-size: 30px;
+    color: var(--text);
+}
+
+.lp-page .section-lead {
+    margin: 0 0 28px;
+    color: var(--muted);
+}
+
+.lp-page .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.lp-page .feature-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(104, 161, 129, 0.24);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 10px 24px rgba(41, 84, 62, 0.07);
+}
+
+.lp-page .feature-card h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: var(--text);
+}
+
+.lp-page .feature-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.lp-page .footer-cta {
+    padding: 0 0 72px;
+}
+
+.lp-page .footer-box {
+    background: linear-gradient(135deg, var(--lp-primary) 0%, var(--lp-primary-dark) 100%);
+    color: #FFFFFF;
+    border-radius: 28px;
+    padding: 32px;
+    box-shadow: 0 18px 40px rgba(41, 84, 62, 0.12);
+}
+
+.lp-page .footer-box h2 {
+    margin: 0 0 10px;
+    font-size: 28px;
+}
+
+.lp-page .footer-box p {
+    margin: 0 0 20px;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.lp-page .footer-box .btn-primary {
+    background: #FFFFFF;
+    color: var(--lp-primary-dark);
+    border-color: #FFFFFF;
+}
+
+.lp-page .footer-box .btn-primary:hover {
+    background: #EFF8F2;
+    border-color: #E7EDF3;
+}
+
+.lp-page .footer-box .btn-secondary {
+    background: transparent;
+    color: #FFFFFF;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.lp-page .footer-box .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 920px) {
+    .lp-page .hero-inner,
+    .lp-page .feature-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .lp-page .hero {
+        padding-top: 44px;
+    }
+
+    .lp-page .grid {
+        grid-template-columns: 62px repeat(5, 1fr);
+        gap: 6px;
+    }
+
+    .lp-page .cell {
+        min-height: 54px;
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .lp-page .footer-box,
+    .lp-page .hero-card,
+    .lp-page .feature-card {
+        padding: 20px;
+    }
+}

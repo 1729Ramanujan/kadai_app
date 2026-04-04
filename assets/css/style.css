@@ -1,0 +1,318 @@
+/* =========================
+   Common UI
+   ========================= */
+
+/* ---------- Theme tokens ---------- */
+:root {
+    --bg: #F5FAF7;
+    --surface: #FFFFFF;
+    --surface-2: #F0F7F3;
+
+    --text: #264238;
+    --muted: #6F8F81;
+
+    --border: rgba(104, 161, 129, 0.34);
+    --shadow: 0 10px 30px rgba(41, 84, 62, 0.10);
+
+    --accent: #58B877;
+    --accent-strong: #3F8E5C;
+    --accent-weak: rgba(88, 184, 119, 0.16);
+
+    --danger: #c85c5c;
+    --danger-soft: rgba(200, 92, 92, 0.10);
+
+    --success: #33A86B;
+    --success-soft: rgba(51, 168, 107, 0.10);
+
+    --radius: 16px;
+    --focus: 0 0 0 3px rgba(88, 184, 119, 0.26);
+
+    --panelW: 380px;
+
+    --sidebar-mini: 64px;
+    --sidebar-open: 220px;
+
+    --app-header-h: 72px;
+    --app-gap: 20px;
+    --page-pad: 20px;
+    --page-pad-lg: 24px;
+}
+
+/* ---------- Base / reset ---------- */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 16px;
+    line-height: 1.45;
+}
+
+body.page--withAppHeader {
+    padding: 0;
+    overflow: auto;
+}
+
+@media (min-width: 1100px) {
+    body {
+        padding: 24px;
+    }
+
+    body.page--withAppHeader {
+        padding: 0;
+    }
+}
+
+h1 {
+    margin: 0 0 12px;
+    font-size: 22px;
+    letter-spacing: 0.2px;
+}
+
+h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+}
+
+p {
+    margin: 0 0 10px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+a:hover {
+    color: var(--accent-strong);
+    text-decoration: underline;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 6px 0;
+}
+
+/* ---------- Cards ---------- */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    margin: 12px 0;
+}
+
+.card.innerCard {
+    background: var(--surface-2);
+    box-shadow: none;
+}
+
+.status {
+    margin: 0;
+    font-weight: 700;
+}
+
+.error {
+    margin: 0;
+    font-weight: 800;
+    color: var(--danger);
+    white-space: pre-wrap;
+}
+
+.errorCard:has(> #error[hidden]) {
+    display: none;
+}
+
+/* index.php 互換 */
+#signedInView {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    margin: 12px 0;
+}
+
+/* ---------- Forms ---------- */
+.form {
+    display: grid;
+    gap: 10px;
+}
+
+label {
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+    margin: 10px 0;
+    font-weight: 700;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font-size: 14px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: rgba(38, 66, 56, 0.50);
+}
+
+:where(input, textarea, select):focus-visible {
+    box-shadow: var(--focus);
+    border-color: rgba(88, 184, 119, 0.72);
+}
+
+.timeRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+@media (max-width: 640px) {
+    .timeRow {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Buttons ---------- */
+.buttonRow {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+button {
+    font: inherit;
+}
+
+button:not(.timetableCell),
+a.button,
+button.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(88, 184, 119, 0.36);
+
+    background: var(--accent);
+    color: #FFFFFF;
+    font-weight: 900;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    user-select: none;
+
+    transition:
+        transform 0.06s ease,
+        filter 0.12s ease,
+        box-shadow 0.12s ease,
+        border-color 0.12s ease,
+        background 0.12s ease;
+    text-decoration: none;
+}
+
+button:not(.timetableCell):hover,
+a.button:hover,
+button.button:hover {
+    background: var(--accent-strong);
+    border-color: var(--accent-strong);
+    filter: none;
+    text-decoration: none;
+}
+
+button:not(.timetableCell):active,
+a.button:active,
+button.button:active {
+    transform: translateY(1px);
+}
+
+button.secondary,
+a.button.secondary {
+    background: var(--surface);
+    color: var(--text);
+    border-color: rgba(104, 161, 129, 0.34);
+    box-shadow: none;
+}
+
+button.secondary:hover,
+a.button.secondary:hover {
+    background: var(--surface-2);
+    color: var(--accent-strong);
+    border-color: rgba(88, 184, 119, 0.42);
+}
+
+button.danger,
+a.button.danger {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: #FFFFFF;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+a.button.small,
+button.small {
+    padding: 7px 10px;
+    font-size: 12px;
+}
+
+:where(button:not(.timetableCell), a.button, button.button):focus-visible {
+    outline: none;
+    box-shadow: var(--focus);
+}
+
+ul {
+    margin: 0;
+}
+
+li {
+    line-height: 1.6;
+}
+
+/* ---------- Divider ---------- */
+.divider {
+    height: 1px;
+    background: rgba(104, 161, 129, 0.22);
+    margin: 16px 0;
+    border: 0;
+}

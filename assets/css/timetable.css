@@ -1,0 +1,1009 @@
+/* =========================
+   Timetable page only
+   ========================= */
+
+:root {
+    --panelW: min(92vw, 420px);
+
+    --tt-bg: #f6fbf7;
+    --tt-surface: #ffffff;
+    --tt-border: #b8d6c2;
+    --tt-border-soft: #dcebe2;
+    --tt-text: #2f4a3d;
+    --tt-muted: #6f8f81;
+    --tt-accent: #58b877;
+    --tt-accent-weak: rgba(88, 184, 119, 0.12);
+
+    /* 緊急度カラーを 黄 → オレンジ → 赤 に変更 */
+    --tt-danger-border: #f0a84a;
+    --tt-danger-1: #fff4b8;
+    /* 余裕あり：うすい黄 */
+    --tt-danger-2: #ffe08a;
+    /* 黄 */
+    --tt-danger-3: #ffc35c;
+    /* 濃い黄〜橙 */
+    --tt-danger-4: #ff9f43;
+    /* オレンジ */
+    --tt-danger-5: #ff6b4a;
+    /* 赤寄りオレンジ */
+    --tt-danger-6: #ef4444;
+    /* 赤 */
+    --tt-danger-strong: #dc2626;
+}
+
+@media (max-width: 900px) {
+    :root {
+        --panelW: min(92vw, 420px);
+    }
+}
+
+/* =========================
+   Viewport control
+   ========================= */
+
+html,
+body {
+    height: 100%;
+}
+
+body.page--timetablePage {
+    height: 100dvh;
+    overflow: hidden;
+}
+
+body.page--timetablePage .appShell {
+    height: 100dvh;
+    overflow: hidden;
+}
+
+body.page--timetablePage .pageMain {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* ヘッダー追加後のページ全体 */
+.pageMain.pageMain--timetable {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.pageContent {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.pageMain--timetable .errorCard {
+    flex: 0 0 auto;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.pageIntro {
+    flex: 0 0 auto;
+    margin-bottom: 12px;
+}
+
+.pageHeading {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: 0.2px;
+}
+
+@media (max-width: 900px) {
+
+    body.page--timetablePage,
+    body.page--timetablePage .appShell,
+    body.page--timetablePage .pageMain,
+    body.page--timetablePage .pageMain.pageMain--timetable,
+    body.page--timetablePage .pageContent {
+        height: auto;
+        overflow: visible;
+    }
+}
+
+/* =========================
+   Layout
+   ========================= */
+
+.timetableLayout {
+    position: relative;
+    height: 100%;
+    min-height: 0;
+}
+
+.pageMain--timetable .timetableLayout {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+}
+
+#gridArea {
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    margin-right: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: margin-right 220ms ease;
+}
+
+.timetableLayout.panel-open #gridArea {
+    margin-right: var(--panelW);
+}
+
+.timetableLayout>.timetableEditor {
+    display: none;
+}
+
+.panelOverlay {
+    position: fixed;
+    inset: var(--app-header-h) 0 0 0;
+    z-index: 40;
+    background: rgba(47, 74, 61, 0.16);
+}
+
+.sidePanel {
+    position: fixed;
+    top: var(--app-header-h);
+    right: 0;
+    z-index: 50;
+
+    width: var(--panelW);
+    height: calc(100dvh - var(--app-header-h));
+    overflow: auto;
+
+    padding: 20px 18px 24px;
+    background: #ffffff;
+    border-left: 1px solid var(--tt-border);
+    box-shadow: -12px 0 32px rgba(47, 74, 61, 0.08);
+
+    transform: translateX(100%);
+    transition: transform 220ms ease;
+}
+
+.timetableLayout.panel-open .sidePanel {
+    transform: translateX(0);
+}
+
+.sidePanel .timetableEditor {
+    display: block;
+    position: static;
+    top: auto;
+    padding: 0;
+    background: transparent;
+    border-left: 0;
+}
+
+.sidePanel .card.innerCard {
+    background: #ffffff;
+    border: 1px solid var(--tt-border);
+    box-shadow: none;
+}
+
+.sidePanel .divider {
+    margin: 18px 0;
+    background: rgba(104, 161, 129, 0.24);
+    border: none;
+    height: 1px;
+}
+
+.panelHeader {
+    position: sticky;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    #gridArea,
+    .sidePanel {
+        transition: none;
+    }
+}
+
+/* =========================
+   Timetable container
+   ========================= */
+
+.timetableGrid {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.timetableGrid>.pageIntro,
+.timetableGrid>#timetableMessage,
+.timetableGrid>h3 {
+    flex: 0 0 auto;
+}
+
+#timetableMessage {
+    margin-bottom: 12px;
+}
+
+#timetableGridWrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    padding-bottom: 0;
+}
+
+/* =========================
+   Timetable table
+   ========================= */
+
+.table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 8px 4px;
+}
+
+.table th,
+.table td {
+    padding: 0;
+    border: none;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table thead th:first-child,
+.table tbody th,
+.periodHead {
+    width: 92px;
+    min-width: 92px;
+    max-width: 92px;
+}
+
+.table thead th {
+    font-size: 13px;
+    font-weight: 900;
+    color: rgba(47, 74, 61, 0.88);
+}
+
+.table thead th:first-child {
+    color: rgba(47, 74, 61, 0.52);
+}
+
+.periodHead {
+    padding: 10px 6px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: normal;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #eef8f1;
+    border: 1px solid var(--tt-border-soft);
+}
+
+.periodNum {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--tt-text);
+}
+
+.periodTime {
+    margin-top: 4px;
+    font-size: 10px;
+    line-height: 1.25;
+    color: var(--tt-muted);
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* 授業セル */
+.timetableCell {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+
+    width: 100%;
+    height: 96px;
+    padding: 10px 12px;
+    overflow: hidden;
+
+    text-align: left;
+    cursor: pointer;
+
+    background: #ffffff;
+    border: 1px solid var(--tt-border);
+    border-radius: 16px;
+
+    transition:
+        transform 0.06s ease,
+        box-shadow 0.16s ease,
+        border-color 0.16s ease,
+        background 0.16s ease;
+}
+
+.timetableCell:hover {
+    transform: translateY(-1px);
+    border-color: var(--tt-accent);
+    box-shadow: 0 14px 32px rgba(88, 184, 119, 0.16);
+}
+
+.timetableCell:active {
+    transform: translateY(0);
+}
+
+.timetableCell .name {
+    overflow: hidden;
+    line-height: 1.18;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--tt-text);
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.timetableCell .time {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 12px;
+    color: var(--tt-accent);
+    font-weight: 600;
+}
+
+.timetableCell:not(.filled) {
+    background: #ffffff;
+}
+
+.timetableCell.filled {
+    background:
+        linear-gradient(0deg,
+            rgba(236, 248, 240, 0.95),
+            rgba(236, 248, 240, 0.95)),
+        #ffffff;
+    border-color: #aebfd1;
+}
+
+.timetableCell.filled::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    left: 0;
+    width: 4px;
+    border-radius: 999px;
+    background: var(--tt-accent);
+}
+
+.timetableCell.active {
+    background:
+        linear-gradient(0deg,
+            rgba(88, 184, 119, 0.12),
+            rgba(88, 184, 119, 0.12)),
+        #ffffff;
+    border-color: var(--tt-accent);
+    box-shadow: 0 0 0 3px rgba(88, 184, 119, 0.24);
+}
+
+.timetableCell.filled.active {
+    background:
+        linear-gradient(0deg,
+            rgba(88, 184, 119, 0.16),
+            rgba(88, 184, 119, 0.16)),
+        #ffffff;
+    border-color: var(--tt-accent);
+    box-shadow: 0 0 0 3px rgba(88, 184, 119, 0.26);
+}
+
+/* =========================
+   Timetable task urgency
+   ========================= */
+
+.timetableCell.has-open-task {
+    border-color: var(--tt-danger-border);
+}
+
+.timetableCell.urgency-1 {
+    background: var(--tt-danger-1);
+}
+
+.timetableCell.urgency-2 {
+    background: var(--tt-danger-2);
+}
+
+.timetableCell.urgency-3 {
+    background: var(--tt-danger-3);
+}
+
+.timetableCell.urgency-4 {
+    background: var(--tt-danger-4);
+}
+
+.timetableCell.urgency-5 {
+    background: var(--tt-danger-5);
+}
+
+.timetableCell.urgency-6 {
+    background: var(--tt-danger-6);
+    border-color: var(--tt-danger-strong);
+}
+
+.timetableCell.has-open-task .name,
+.timetableCell.has-open-task .time {
+    color: #5a2b2b;
+}
+
+.timetableCell.active.has-open-task {
+    box-shadow: 0 0 0 3px rgba(217, 72, 72, 0.18);
+}
+
+.timetableCell.filled.urgency-1::before {
+    background: #eab308;
+}
+
+.timetableCell.filled.urgency-2::before {
+    background: #f59e0b;
+}
+
+.timetableCell.filled.urgency-3::before {
+    background: #f97316;
+}
+
+.timetableCell.filled.urgency-4::before {
+    background: #ea580c;
+}
+
+.timetableCell.filled.urgency-5::before {
+    background: #ef4444;
+}
+
+.timetableCell.filled.urgency-6::before {
+    background: #dc2626;
+}
+
+/* =========================
+   Form / tasks panel
+   ========================= */
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form label,
+.innerCard label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--tt-text);
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.form input,
+.innerCard input,
+.innerCard textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--tt-border);
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 10px 12px;
+    color: var(--tt-text);
+    font-size: 14px;
+    outline: none;
+}
+
+.form input:focus,
+.innerCard input:focus,
+.innerCard textarea:focus {
+    border-color: var(--tt-accent);
+    box-shadow: 0 0 0 3px rgba(88, 184, 119, 0.14);
+}
+
+.innerCard textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.buttonRow {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.buttonRow>button,
+.innerCard>button,
+.taskBtns .button,
+#panelClose {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: var(--tt-accent);
+    color: #ffffff;
+    font-weight: 800;
+    padding: 10px 14px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.buttonRow>button.secondary,
+#panelClose.secondary,
+.secondary {
+    background: #eef8f1;
+    color: var(--tt-text);
+    border-color: var(--tt-border);
+}
+
+.buttonRow>button:disabled,
+.innerCard>button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Slot label text (replaces chip buttons) */
+.slotLabels {
+    margin: 4px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.slotLabel {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--tt-text);
+}
+
+.slotLabel.is-current {
+    color: var(--tt-accent);
+}
+
+.slotLabel:not(:last-child)::after {
+    content: " /";
+    color: var(--tt-muted);
+    font-weight: 400;
+}
+
+/* =========================
+   Slot accordion
+   ========================= */
+
+.slotAccordion {
+    margin-top: 10px;
+    border: 1px solid var(--tt-border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.slotAccordionToggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--tt-text);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    transition: background 0.14s ease, color 0.14s ease;
+}
+
+.slotAccordionToggle::-webkit-details-marker {
+    display: none;
+}
+
+.slotAccordionToggle::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236f8f81' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: transform 0.18s ease;
+}
+
+.slotAccordion[open] .slotAccordionToggle::after {
+    transform: rotate(180deg);
+}
+
+.slotAccordionToggle:hover {
+    background: #f2faf5;
+    color: var(--tt-accent);
+}
+
+.slotAccordion[open] .slotAccordionToggle {
+    border-bottom: 1px solid var(--tt-border);
+    background: #f7fbf8;
+}
+
+.slotAccordionBody {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* =========================
+   Tasks list
+   ========================= */
+
+.tasksList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.taskItem {
+    position: relative;
+    background: #fafdfb;
+    border: 1px solid var(--tt-border);
+    border-radius: 16px;
+    padding: 14px;
+    transition:
+        border-color 0.16s ease,
+        background 0.16s ease,
+        box-shadow 0.16s ease,
+        transform 0.12s ease;
+}
+
+.taskItem::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    bottom: 12px;
+    left: 0;
+    width: 4px;
+    border-radius: 999px;
+    background: transparent;
+}
+
+.taskTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.taskMain {
+    min-width: 0;
+    flex: 1;
+}
+
+.taskTitleRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.taskTitle {
+    min-width: 0;
+    flex: 1;
+    font-weight: 800;
+    color: var(--tt-text);
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.taskCountdown {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.countdown-neutral {
+    background: #f2f7f4;
+    color: var(--tt-muted);
+    border-color: var(--tt-border-soft);
+}
+
+.countdown-done {
+    background: #eef5f0;
+    color: #5d7a6b;
+    border-color: #cfe1d6;
+}
+
+.countdown-1 {
+    background: rgba(230, 188, 188, 0.14);
+    color: #9c5f5f;
+    border-color: #e6bcbc;
+}
+
+.countdown-2 {
+    background: rgba(226, 163, 163, 0.16);
+    color: #955555;
+    border-color: #e2a3a3;
+}
+
+.countdown-3 {
+    background: rgba(220, 141, 141, 0.18);
+    color: #8f4646;
+    border-color: #dc8d8d;
+}
+
+.countdown-4 {
+    background: rgba(215, 116, 116, 0.2);
+    color: #873737;
+    border-color: #d77474;
+}
+
+.countdown-5 {
+    background: rgba(211, 92, 92, 0.22);
+    color: #7f2c2c;
+    border-color: #d35c5c;
+}
+
+.countdown-6 {
+    background: rgba(217, 72, 72, 0.18);
+    color: #a61f1f;
+    border-color: #d94848;
+}
+
+.taskMeta {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--tt-text);
+    font-weight: 700;
+}
+
+.taskBtns .button.small {
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+.taskDetail {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    word-break: break-word;
+    color: var(--tt-text);
+}
+
+/* 課題カードの緊急度 */
+.taskItem.task-urgency-1 {
+    border-color: #e6bcbc;
+    background:
+        linear-gradient(0deg,
+            rgba(230, 188, 188, 0.12),
+            rgba(230, 188, 188, 0.12)),
+        #fafdfb;
+}
+
+.taskItem.task-urgency-1::before {
+    background: #efb7b7;
+}
+
+.taskItem.task-urgency-2 {
+    border-color: #e2a3a3;
+    background:
+        linear-gradient(0deg,
+            rgba(226, 163, 163, 0.14),
+            rgba(226, 163, 163, 0.14)),
+        #fafdfb;
+}
+
+.taskItem.task-urgency-2::before {
+    background: #e79a9a;
+}
+
+.taskItem.task-urgency-3 {
+    border-color: #dc8d8d;
+    background:
+        linear-gradient(0deg,
+            rgba(220, 141, 141, 0.17),
+            rgba(220, 141, 141, 0.17)),
+        #fafdfb;
+}
+
+.taskItem.task-urgency-3::before {
+    background: #df7f7f;
+}
+
+.taskItem.task-urgency-4 {
+    border-color: #d77474;
+    background:
+        linear-gradient(0deg,
+            rgba(215, 116, 116, 0.2),
+            rgba(215, 116, 116, 0.2)),
+        #fafdfb;
+}
+
+.taskItem.task-urgency-4::before {
+    background: #d96565;
+}
+
+.taskItem.task-urgency-5 {
+    border-color: #d35c5c;
+    background:
+        linear-gradient(0deg,
+            rgba(211, 92, 92, 0.24),
+            rgba(211, 92, 92, 0.24)),
+        #fafdfb;
+    box-shadow: 0 0 0 1px rgba(217, 72, 72, 0.05);
+}
+
+.taskItem.task-urgency-5::before {
+    background: #d94848;
+}
+
+.taskItem.task-urgency-6 {
+    border-color: var(--tt-danger-strong);
+    background:
+        linear-gradient(0deg,
+            rgba(217, 72, 72, 0.28),
+            rgba(217, 72, 72, 0.28)),
+        #fafdfb;
+    box-shadow: 0 0 0 2px rgba(217, 72, 72, 0.08);
+}
+
+.taskItem.task-urgency-6::before {
+    background: #b42323;
+}
+
+/* 完了済み */
+.taskItem.task-done {
+    background: #f6f8fb;
+    border-color: var(--tt-border-soft);
+    box-shadow: none;
+    opacity: 1;
+}
+
+.taskItem.task-done::before {
+    background: #c7d2de;
+}
+
+.taskItem.task-done .taskTitle {
+    color: #5f7268;
+}
+
+.taskItem.task-done .taskMeta,
+.taskItem.task-done .taskDetail {
+    color: var(--tt-muted);
+}
+
+
+.periodHead {
+    width: 110px;
+    min-width: 110px;
+    padding: 10px 8px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.periodNum {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text, #111827);
+}
+
+.periodTime {
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 1.3;
+    color: var(--muted, #6b7280);
+}
+
+/* =========================
+   Mobile
+   ========================= */
+
+@media (max-width: 900px) {
+
+    .timetableLayout,
+    #gridArea,
+    .timetableGrid {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+    }
+
+    .pageMain--timetable .timetableLayout {
+        height: auto;
+    }
+
+    .timetableLayout.panel-open #gridArea {
+        margin-right: 0;
+    }
+
+    #timetableGridWrap {
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 6px;
+    }
+
+    .table {
+        width: 760px;
+        min-width: 760px;
+        height: auto;
+    }
+
+    .table thead th:first-child,
+    .table tbody th,
+    .periodHead {
+        width: 78px;
+        min-width: 78px;
+        max-width: 78px;
+    }
+
+    .periodHead {
+        padding: 8px 4px;
+    }
+
+    .periodNum {
+        font-size: 13px;
+    }
+
+    .periodTime {
+        font-size: 9px;
+    }
+
+    .timetableCell {
+        height: 90px;
+        padding: 8px 10px;
+    }
+
+    .timetableCell .name {
+        font-size: 14px;
+    }
+
+    .timetableCell .time {
+        font-size: 11px;
+    }
+
+    .taskTop {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .taskTitleRow {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .taskCountdown {
+        align-self: flex-start;
+    }
+
+    .sidePanel {
+        top: var(--app-header-h);
+        width: 100%;
+        height: calc(100dvh - var(--app-header-h));
+    }
+}
